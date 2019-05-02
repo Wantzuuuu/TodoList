@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>待辦事項清單</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0px;
+            min-height: 100vh;
+            width: 100%;
+            background-image: url('https://picsum.photos/1500/1500?image=869');
+            background-position: center center;
+            background-color: rgb(46, 48, 56);
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        body:after {
+            position: absolute;
+            display: block;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            content: "";
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        #todoForm,
+        #todoList {
+            position: relative;
+            z-index: 10;
+        }
+
+        #todoForm {
+            margin: 50px 0 0 0;
+            padding: 20px 20px;
+            background: white;
+            opacity: 0.9;
+            box-shadow: 0 10px 0 -5px rgba(0, 0, 0, .2);
+        }
+
+        #todoList {
+            padding: 30px 0px;
+        }
+
+        .todo-item {
+            width: 100%;
+            padding: 15px 15px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 10px 0 -5px rgba(0, 0, 0, .2);
+            transition: all .3s ease;
+            cursor: pointer;
+        }
+
+        .todo-item:hover {
+            opacity: 1;
+        }
+
+        .todo-item.red {
+            background-color: rgb(250, 72, 72);
+        }
+
+        .todo-item.yellow {
+            background-color: rgb(226, 182, 59);
+        }
+
+        .todo-item.green {
+            background-color: rgb(49, 117, 49);
+        }
+
+        .todo-item.blue {
+            background-color: rgb(37, 76, 148);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <!-- 表單 -->
+                <form id="todoForm">
+                    <div class="form-group">
+                        <label for="todoItemNameInput">待辦事項</label>
+                        <input id="todoItemNameInput" type="text" class="form-control" placeholder="EX: 做作業" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="todoItemColorInput">標籤色彩</label>
+                        <select id="todoItemColorInput" class="form-control" required>
+                            <option value="red">紅</option>
+                            <option value="yellow">黃</option>
+                            <option value="green">綠</option>
+                            <option value="blue">藍</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">新增待辦事項</button>
+                    <button id="clearAllBtn" type="button" class="btn btn-danger btn-block">清空所有待辦事項</button>
+                </form>
+                <!-- 表單 end -->
+                <!-- 代辦事項 -->
+                <div id="todoList">
+
+                </div>
+                <!-- 代辦事項 end -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 引用jquery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- script -->
+    <script>
+        /*
+            1. 待辦事項可透過表單新增
+            2. 點擊已存在的待辦事項即可刪除此待辦事項
+            3. 點擊清空所有待辦事項則刪除所有待辦事項
+        */
+        // 建立待辦事項清單
+        let todoList = [];
+
+        // TODO: 渲染清單的函數
+        function renderList() {
+            $("#todoList").empty();
+            todoList.forEach(function (todoItem, i) {
+                $("#todoList").append(`<div 
+                    data-index="${i}"
+                    class="todo-item ${todoItem.color}">${todoItem.name}
+                    </div>`)
+            })
+        }
+
+        // TODO: 送出代辦事項表單後，需要新增一個待辦事項
+        $("#todoForm").submit(function (e) {
+            e.preventDefault();
+            // console.log("表單被送出了")
+            const todoItem = {
+                name: $("#todoItemNameInput").val(),
+                color: $("#todoItemColorInput").val()
+            }
+            todoList.push(todoItem)
+            renderList();
+        })
+        // TODO: 點擊單一代辦事項後需要刪除該項目
+        $("#todoList").delegate(".todo-item", "click", function () {
+            const targetIndex = parseInt($(this).attr("data-index"));
+            todoList.splice(targetIndex, 1);
+            renderList();
+        });
+        // TODO: 點擊清空所有代辦事項後，需要清空所有代辦事項
+        $("#clearAllBtn").click(function () {
+            todoList = [];
+            renderList();
+        });
+    </script>
+</body>
+
+</html>
